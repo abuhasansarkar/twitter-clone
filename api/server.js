@@ -12,6 +12,8 @@ import mongoDB from "./db/connectMongo.js";
 
 // Default middleware
 app.use(express.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // 3rd Party middleware
 app.use(cors());

@@ -3,6 +3,7 @@ import User from "./../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
+import mongoDB from "../db/connectMongo.js";
 
 // SingUp Function
 export const singUp = async (req, res) => {
@@ -13,6 +14,13 @@ export const singUp = async (req, res) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: "Invalid email format !" });
     }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "You must be enter your password 6 character plus !",
+      });
+    }
+
     // Exits Username
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -30,7 +38,7 @@ export const singUp = async (req, res) => {
     // Hash Password
 
     const hastPassword = await bcrypt.hashSync(password, 10);
-    console.log(hastPassword);
+    // console.log(hastPassword);
 
     const newUser = new User({
       username,
@@ -59,16 +67,55 @@ export const singUp = async (req, res) => {
       res.status(400).json({ message: "Invalid User data" });
     }
   } catch (error) {
+    res.status(400).json({ message: "Something is Wrong for SingUp System !" });
     console.log(error.message);
   }
 };
 
 // SignIn Function
 export const singIn = async (req, res) => {
-  res.json("signUp router is running");
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({ username });
+    const isPasswordCurrect = await bcrypt.compareSync(
+      password,
+      user?.password
+    );
+
+    if (!user || !isPasswordCurrect) {
+      return res
+        .status(404)
+        .json({ message: "Invalid Username Or Password !" });
+    }
+    generateTokenAndSetCookie(user._id, res);
+
+    res.status(200).json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      fullName: user.fullName,
+      profileImg: user.profileImg,
+      coverImg: user.coverImg,
+      followers: user.followers,
+      following: user.following,
+      link: user.link,
+      bio: user.bio,
+    });
+  } catch (error) {
+    res.status(400).json({ message: "Something is Wrong for SingIn System !" });
+    console.log(error.message);
+  }
 };
 
 // SingOut Function
 export const singOut = async (req, res) => {
-  res.json("signOut router is running");
+  try {
+    res.cookie("jwtToken", "", { mexAge: 0 });
+    res.status(200).json({ message: "SingOut Successfully !" });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Something is Wrong for SingOut System !" });
+    console.log(error.message);
+  }
 };
