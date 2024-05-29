@@ -25,6 +25,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 
+// root api
 app.use("/", (req, res) => {
   res.json("server is running");
 });

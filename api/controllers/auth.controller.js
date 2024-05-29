@@ -36,7 +36,6 @@ export const singUp = async (req, res) => {
     }
 
     // Hash Password
-
     const hastPassword = await bcrypt.hashSync(password, 10);
     // console.log(hastPassword);
 
@@ -117,5 +116,17 @@ export const singOut = async (req, res) => {
       .status(400)
       .json({ message: "Something is Wrong for SingOut System !" });
     console.log(error.message);
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    res.status(200).json(user);
+  } catch (error) {
+     res
+       .status(400)
+       .json({ message: "Something is Wrong for getMe verify System !" });
+     console.log(error.message);
   }
 };
