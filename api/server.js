@@ -10,8 +10,12 @@ import mongoDB from "./db/connectMongo.js";
 
 // Middleware
 
+// Default middleware
+app.use(express.json());
+
+// 3rd Party middleware
 app.use(cors());
-app.use(json());
+app.use(cookieParser());
 
 // Database Connection
 
