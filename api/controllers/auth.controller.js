@@ -1,9 +1,8 @@
 // SignUp
 import User from "./../models/user.model.js";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
-import mongoDB from "../db/connectMongo.js";
+// import mongoDB from "../db/connectMongo.js";
 
 // SingUp Function
 export const singUp = async (req, res) => {
@@ -81,11 +80,12 @@ export const singIn = async (req, res) => {
       user?.password
     );
 
-    if (!user || !isPasswordCurrect) {
+    if (!username || !isPasswordCurrect) {
       return res
         .status(404)
         .json({ message: "Invalid Username Or Password !" });
     }
+
     generateTokenAndSetCookie(user._id, res);
 
     res.status(200).json({
@@ -124,9 +124,9 @@ export const getMe = async (req, res) => {
     const user = await User.findById(req.user._id).select("-password");
     res.status(200).json(user);
   } catch (error) {
-     res
-       .status(400)
-       .json({ message: "Something is Wrong for getMe verify System !" });
-     console.log(error.message);
+    res
+      .status(400)
+      .json({ message: "Something is Wrong for getMe verify System !" });
+    console.log(error.message);
   }
 };
