@@ -1,9 +1,9 @@
-import express, { json } from "express";
-const app = express();
-import cors from "cors";
-import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import dotenv from "dotenv";
+import express from "express";
+const app = express();
 dotenv.config();
 
 cloudinary.config({
@@ -17,6 +17,8 @@ import authRoutes from "./routes/auth.routes.js";
 
 import userRoutes from "./routes/user.routes.js";
 
+import postRoutes from "./routes/post.routes.js";
+
 import mongoDB from "./db/connectMongo.js";
 
 // Middleware
@@ -26,17 +28,24 @@ app.use(express.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 3rd Party middleware
+// 3rd-Party middleware
 app.use(cors());
 app.use(cookieParser());
 
 // Database Connection
 
 // Main API URL Here
-
+// Authentication api
 app.use("/api/auth", authRoutes);
 
+// User api
 app.use("/api/user", userRoutes);
+
+// Post api
+app.use("/api/posts", postRoutes);
+
+
+
 
 // root api
 app.use("/", (req, res) => {

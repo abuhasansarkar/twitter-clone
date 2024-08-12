@@ -1,20 +1,21 @@
-import User from "../models/user.model.js";
-import Notification from "../models/notification.model.js";
-import { v2 as cloudinary } from "cloudinary";
 import bcrypt from "bcryptjs";
+import { v2 as cloudinary } from "cloudinary";
+import Notification from "../models/notification.model.js";
+import User from "../models/user.model.js";
 
 // User Controller
 // Get single user
 export const getUserProfile = async (req, res) => {
   const { username } = req.params;
+  console.log(username);
   try {
     const user = await User.findOne({ username }).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found! try again." });
     }
-
     res.status(200).json(user);
+
   } catch (error) {
     res.status(404).json({ message: "something is wrong in user controller" });
     console.log(error.message);
@@ -33,6 +34,7 @@ export const followUnfollowUser = async (req, res) => {
         .status(400)
         .json({ message: "You can't Follow/Unfollow Yourself" });
     }
+
     if (!userToModify || !currentUser) {
       return res.status(400).json({ message: "User Not Found !" });
     }
@@ -44,11 +46,15 @@ export const followUnfollowUser = async (req, res) => {
     if (isFollowing) {
       // Unfollow the User
       await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
+
       await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
+
       res.status(200).json({ message: "User Unfollow Successfully" });
     } else {
+
       // Follow the User
       await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
+      
       await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
 
       // When Follow any user send notification

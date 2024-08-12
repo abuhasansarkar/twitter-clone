@@ -10,7 +10,7 @@ export const protectedRoute = async (req, res, next) => {
     if (!jwtAccessToken) {
       return res
         .status(401)
-        .json({ message: "Unauthorized, Please SinIn First" });
+        .json({ message: "Unauthorized, Please Signin First" });
     }
 
     const jwtTokenDecoded = jwt.verify(

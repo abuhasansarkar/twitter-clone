@@ -13,8 +13,8 @@ router.get("/profile/:username", protectedRoute, getUserProfile);
 
 router.get("/follow/:id", protectedRoute, followUnfollowUser);
 
-router.get("/suggested/", protectedRoute, suggestedUserProfile);
+router.get("/suggested", protectedRoute, suggestedUserProfile);
 
-router.get("/update/", protectedRoute, updateUser);
+router.get("/update", protectedRoute, updateUser);
 
 export default router;
