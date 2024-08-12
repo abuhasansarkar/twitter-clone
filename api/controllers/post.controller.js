@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
+import Notification from "../models/notification.model.js";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 
@@ -66,29 +67,65 @@ export const deletePost = async (req, res) => {
 
 export const commentOnPost = async (req, res) => {
   try {
-      const { text } = req.body;
+    const { text } = req.body;
     const postId = req.params.id;
     const userId = req.user.id;
 
-    console.log("postid/", postId, "userId/", userId);
-    if(!text){
-        return res.status(400).json({message: "You must write Comment !"})
+    if (!text) {
+      return res.status(400).json({ message: "You must write Comment !" });
     }
 
     const post = await Post.findById(postId);
-    if(!post){
-        return res.status(404).json({message: "Post not Found !"})
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not Found !" });
     }
     // Comment
-    const comment = {user: userId, text}
+    const comment = { user: userId, text };
 
     post.comments.push(comment);
 
-   await post.save();
+    await post.save();
 
     res.status(200).json(post);
-
   } catch (error) {
     console.log("Internal error form post controller", error);
+  }
+};
+
+export const likeUnlikePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const userId = req.user.id;
+
+    const post = await Post.findById(postId);
+    console.log(post);
+
+    const userLikedPost = post.likes.includes(userId);
+
+    if(userLikedPost){
+        // Unlike Post 
+        await Post.updateOne({_id:postId}, {$pull: {likes: userId}});
+
+        res.status(200).json({message: "Unlike the post successfully !"});
+
+    }else{
+        // Like the post
+        //   post.likes.push(userId);
+        await Post.updateOne({_id:postId}, {$push: {likes: userId}});
+
+        // Notification send
+        const notification = new Notification({
+            from: userId,
+            to: post.user,
+            type: "like"
+        })
+
+        await notification.save();
+        res.status(200).json({message: "Like the post Successfully :)"})
+    }
+
+  } catch (error) {
+    console.log(error);
   }
 };
