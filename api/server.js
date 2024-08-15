@@ -17,7 +17,9 @@ import authRoutes from "./routes/auth.routes.js";
 
 import userRoutes from "./routes/user.routes.js";
 
+import NotificationRoutes from "./routes/notification.routes.js";
 import postRoutes from "./routes/post.routes.js";
+
 
 import mongoDB from "./db/connectMongo.js";
 
@@ -43,6 +45,9 @@ app.use("/api/user", userRoutes);
 
 // Post api
 app.use("/api/posts", postRoutes);
+
+// Notification api
+app.use("/api/notifications", NotificationRoutes);
 
 
 

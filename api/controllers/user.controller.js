@@ -7,7 +7,7 @@ import User from "../models/user.model.js";
 // Get single user
 export const getUserProfile = async (req, res) => {
   const { username } = req.params;
-  console.log(username);
+
   try {
     const user = await User.findOne({ username }).select("-password");
 
