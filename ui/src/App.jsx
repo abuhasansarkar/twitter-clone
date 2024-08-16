@@ -1,10 +1,22 @@
+import { Toaster } from 'react-hot-toast';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import Register from "./pages/Register";
 
 function App() {
   return (
-    <>
-      <h1 className="text-3xl font-bold">Hello world!</h1>
-    </>
+    <div className="flex max-w-6xl mx-auto">
+      <BrowserRouter basename="/">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </BrowserRouter>
+      <Toaster position="top-right"/>
+    </div>
   );
 }
 
